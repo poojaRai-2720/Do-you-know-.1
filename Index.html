@@ -480,145 +480,190 @@ function resetPassword(){
 }
 </script>
 
+
 <!-- FIREBASE AUTHENTICATION -->
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
+
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-analytics.js";
+
 import {
- getAuth,onAuthStateChanged,
- createUserWithEmailAndPassword,
- signInWithEmailAndPassword,
- GoogleAuthProvider,FacebookAuthProvider,
- OAuthProvider,signInWithPopup,signOut,
- updateProfile,sendPasswordResetEmail
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  OAuthProvider,
+  signInWithPopup,
+  signOut,
+  updateProfile,
+  sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js";
 
-/* PASTE YOUR FIREBASE CONFIG HERE */
-const firebaseConfig={
- <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBr3E7qglStok0LJFfXJLGQS0d2fTYqKwM",
-    authDomain: "do-you-know-ba5d2.firebaseapp.com",
-    projectId: "do-you-know-ba5d2",
-    storageBucket: "do-you-know-ba5d2.firebasestorage.app",
-    messagingSenderId: "324928169452",
-    appId: "1:324928169452:web:0b3eaf4963eb844c190cc9",
-    measurementId: "G-BEK329L63V"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
+// YOUR FIREBASE CONFIGURATION
+const firebaseConfig = {
+  apiKey: "AIzaSyBr3E7qglStok0LJFfXJLGQS0d2fTYqKwM",
+  authDomain: "do-you-know-ba5d2.firebaseapp.com",
+  projectId: "do-you-know-ba5d2",
+  storageBucket: "do-you-know-ba5d2.firebasestorage.app",
+  messagingSenderId: "324928169452",
+  appId: "1:324928169452:web:0b3eaf4963eb844c190cc9",
+  measurementId: "G-BEK329L63V"
 };
 
-let auth=null;
-let firebaseReady=false;
+// INITIALIZE FIREBASE
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-const isConfigured=
- firebaseConfig.apiKey!=="YOUR_API_KEY"&&
- firebaseConfig.projectId!=="YOUR_PROJECT_ID";
-
-if(isConfigured){
- try{
-  const app=initializeApp(firebaseConfig);
-  auth=getAuth(app);
-  firebaseReady=true;
- }catch(e){console.error("Firebase error:",e);}
+// INITIALIZE ANALYTICS
+try {
+  getAnalytics(app);
+} catch (error) {
+  console.warn("Analytics unavailable:", error);
 }
 
-window.auth=auth;
-window.firebaseReady=firebaseReady;
-window.sendPasswordResetEmail=sendPasswordResetEmail;
+window.auth = auth;
+window.firebaseReady = true;
+window.sendPasswordResetEmail = sendPasswordResetEmail;
 
-const authForm=document.getElementById("authForm");
+// EMAIL SIGNUP AND LOGIN
+const authForm = document.getElementById("authForm");
 
-authForm.addEventListener("submit",async e=>{
- e.preventDefault();
- if(!auth)return notify("Please configure Firebase Authentication first.");
+authForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
- const email=document.getElementById("authEmail").value.trim();
- const password=document.getElementById("authPassword").value;
- const name=document.getElementById("authName").value.trim();
- const submit=document.getElementById("authSubmit");
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+  const name = document.getElementById("authName").value.trim();
+  const submit = document.getElementById("authSubmit");
 
- submit.disabled=true;submit.textContent="Please wait...";
+  submit.disabled = true;
+  submit.textContent = "Please wait...";
 
- try{
-  if(mode==="signup"){
-   const result=await createUserWithEmailAndPassword(auth,email,password);
-   if(name)await updateProfile(result.user,{displayName:name});
-   notify("Account created successfully! Welcome! 💗");
-  }else{
-   await signInWithEmailAndPassword(auth,email,password);
-   notify("Welcome back! Happy reading! 📚");
+  try {
+    if (mode === "signup") {
+      const result = await createUserWithEmailAndPassword(
+        auth, email, password
+      );
+
+      if (name) {
+        await updateProfile(result.user, {
+          displayName: name
+        });
+      }
+
+      notify("Account created successfully! 💗");
+
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+      notify("Welcome back! Happy reading! 📚");
+    }
+
+    closeModal("authModal");
+
+  } catch (error) {
+    const messages = {
+      "auth/email-already-in-use": "This email already has an account.",
+      "auth/invalid-email": "Please enter a valid email.",
+      "auth/weak-password": "Password must contain at least 6 characters.",
+      "auth/invalid-credential": "Incorrect email or password.",
+      "auth/popup-closed-by-user": "Sign-in window was closed."
+    };
+
+    notify(messages[error.code] || error.message);
+
+  } finally {
+    submit.disabled = false;
+    submit.textContent =
+      mode === "signup" ? "Create account" : "Login";
   }
-  closeModal("authModal");
- }catch(error){
-  const messages={
-   "auth/email-already-in-use":"This email already has an account.",
-   "auth/invalid-email":"Please enter a valid email.",
-   "auth/weak-password":"Password must contain at least 6 characters.",
-   "auth/invalid-credential":"Incorrect email or password.",
-   "auth/popup-closed-by-user":"Sign-in window was closed."
-  };
-  notify(messages[error.code]||error.message);
- }finally{
-  submit.disabled=false;
-  submit.textContent=mode==="signup"?"Create account":"Login";
- }
 });
 
-window.socialLogin=async function(provider){
- if(!auth)return notify("Please configure Firebase first.");
- let p;
- if(provider==="google")p=new GoogleAuthProvider();
- if(provider==="facebook")p=new FacebookAuthProvider();
- if(provider==="linkedin")p=new OAuthProvider("oidc.linkedin");
+// GOOGLE, FACEBOOK AND LINKEDIN LOGIN
+window.socialLogin = async function(provider) {
 
- try{
-  await signInWithPopup(auth,p);
-  closeModal("authModal");
-  notify("Successfully signed in! 💗");
- }catch(e){
-  notify(e.code==="auth/unauthorized-domain"?
-   "Add your GitHub Pages domain in Firebase Authorized Domains.":
-   e.code==="auth/operation-not-allowed"?
-   "Enable this sign-in provider in Firebase Console.":
-   e.message);
- }
+  let selectedProvider;
+
+  if (provider === "google") {
+    selectedProvider = new GoogleAuthProvider();
+  }
+
+  if (provider === "facebook") {
+    selectedProvider = new FacebookAuthProvider();
+  }
+
+  if (provider === "linkedin") {
+    selectedProvider = new OAuthProvider("oidc.linkedin");
+  }
+
+  try {
+    await signInWithPopup(auth, selectedProvider);
+
+    closeModal("authModal");
+    notify("Successfully signed in! 💗");
+
+  } catch (error) {
+
+    if (error.code === "auth/unauthorized-domain") {
+      notify("Add your GitHub Pages domain in Firebase Authorized Domains.");
+
+    } else if (error.code === "auth/operation-not-allowed") {
+      notify("Enable this login provider in Firebase Console.");
+
+    } else {
+      notify(error.message);
+    }
+  }
 };
 
-onAuthStateChanged(auth,user=>{
- const area=document.getElementById("userArea");
- if(user){
-  const name=(user.displayName||user.email||"Reader").split(" ")[0];
-  area.innerHTML=`
-   <span title="${user.email||""}">Hi, ${name}! ♡</span>
-   <button class="icon-btn" onclick="logout()">Logout</button>
-  `;
- }else{
-  area.innerHTML='<button class="primary-btn" onclick="openAuth()">Login</button>';
- }
+// LOGIN STATE
+onAuthStateChanged(auth, (user) => {
+
+  const area = document.getElementById("userArea");
+
+  if (user) {
+
+    const name = (
+      user.displayName || user.email || "Reader"
+    ).split(" ")[0];
+
+    area.innerHTML = `
+      <span>Hi, ${name}! ♡</span>
+      <button class="icon-btn" onclick="logout()">Logout</button>
+    `;
+
+  } else {
+
+    area.innerHTML = `
+      <button class="primary-btn" onclick="openAuth()">Login</button>
+    `;
+  }
 });
 
-window.logout=async function(){
- try{
-  await signOut(auth);
-  notify("Logged out successfully!");
- }catch(e){notify(e.message);}
+// LOGOUT
+window.logout = async function() {
+  try {
+    await signOut(auth);
+    notify("Logged out successfully!");
+  } catch (error) {
+    notify(error.message);
+  }
 };
 </script>
 
-<script>
-renderBooks();
+
+  function resetPassword(){
+ const email=document.getElementById("authEmail").value;
+
+ if(!email)return notify("Enter your email address first.");
+
+ if(!window.auth)return notify("Firebase is not ready yet.");
+
+ window.sendPasswordResetEmail(window.auth,email)
+  .then(()=>notify("Password reset email sent! 💌"))
+  .catch(e=>notify(e.message));
+}
 </script>
 </body>
 </html>
