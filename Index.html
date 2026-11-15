@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fff5fa">
+<title>Do you know? | A World of Stories</title>
+
+<style>
+:root{
+--bg:#fff8fc;--surface:#fff;--text:#302b48;
+--muted:#918ba5;--pink:#ef91bd;--blue:#789ef5;
+--purple:#a997ec;--border:#f0e7f3;
+--shadow:0 5px 22px rgba(100,70,140,.09);
+}
+body.dark{
+--bg:#141426;--surface:#202039;--text:#f8efff;
+--muted:#aaa5c4;--pink:#ff91c9;--blue:#75baff;
+--purple:#b9a4ff;--border:#383650;
+--shadow:0 5px 22px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+font-family:Arial,Helvetica,sans-serif;transition:.2s}
+button,input{font:inherit}
+button{cursor:pointer}
+header{
+position:sticky;top:0;z-index:10;background:var(--surface);
+border-bottom:1px solid var(--border);padding:13px 4%;
+display:flex;align-items:center;gap:18px
+}
+.logo{font-size:24px;font-weight:900;color:var(--pink);
+white-space:nowrap;letter-spacing:-1px}
+.logo span{color:var(--blue)}
+.search{flex:1;background:var(--bg);border:1px solid var(--border);
+border-radius:30px;padding:0 16px;display:flex;align-items:center}
+.search input{width:100%;padding:13px 5px;border:0;outline:0;
+background:transparent;color:var(--text)}
+.actions{display:flex;align-items:center;gap:8px}
+.btn{border:0;border-radius:25px;padding:11px 18px;
+background:var(--blue);color:white;font-weight:bold}
+.btn.pink{background:var(--pink)}
+.btn.secondary{background:var(--bg);color:var(--text);
+border:1px solid var(--border)}
+.icon-btn{width:42px;height:42px;border:0;border-radius:50%;
+background:var(--bg);color:var(--text);font-size:19px}
+main{max-width:1450px;margin:auto;padding:25px 4% 55px}
+.hero{
+border-radius:25px;padding:35px;min-height:245px;
+display:flex;align-items:center;justify-content:space-between;
+gap:20px;background:linear-gradient(115deg,#e9e9ff,#ffe3ef,#dceeff);
+color:#35304f;overflow:hidden
+}
+body.dark .hero{background:linear-gradient(115deg,#30305a,#53324f,#19415d);color:white}
+.hero h1{font-size:clamp(30px,5vw,48px);margin:12px 0}
+.hero p{line-height:1.7;max-width:550px}
+.hero-art{font-size:90px}
+.section-head{display:flex;align-items:center;justify-content:space-between;
+gap:12px;margin:32px 0 17px}
+.section-head h2{font-size:23px;margin:0}
+.muted{color:var(--muted)}
+.categories{display:flex;gap:10px;overflow-x:auto;padding:5px 0 14px}
+.category{white-space:nowrap;border:1px solid var(--border);
+background:var(--surface);color:var(--text);border-radius:25px;
+padding:10px 17px;font-weight:bold}
+.category.active,.category:hover{background:var(--blue);color:white}
+.story-banner{background:var(--surface);border:1px solid var(--border);
+border-radius:20px;padding:18px;box-shadow:var(--shadow)}
+.story-row{display:flex;gap:19px;overflow-x:auto}
+.story{min-width:85px;text-align:center;cursor:pointer}
+.story-circle{width:75px;height:75px;margin:0 auto 8px;
+border-radius:50%;padding:4px;background:linear-gradient(135deg,var(--pink),var(--blue),var(--purple))}
+.story-circle img{width:100%;height:100%;object-fit:cover;
+border-radius:50%;border:3px solid var(--surface)}
+.story small{color:var(--muted);font-weight:bold}
+.masonry{columns:4 210px;column-gap:17px}
+.book-card{break-inside:avoid;margin-bottom:18px;background:var(--surface);
+border:1px solid var(--border);border-radius:18px;overflow:hidden;
+box-shadow:var(--shadow);transition:.2s}
+.book-card:hover{transform:translateY(-4px)}
+.cover{position:relative;cursor:pointer}
+.cover img{width:100%;display:block;object-fit:cover;max-height:340px;min-height:170px}
+.fav{position:absolute;right:10px;top:10px;width:38px;height:38px;
+border:0;border-radius:50%;background:white;color:#eb6da5;font-size:21px}
+.book-info{padding:13px}
+.book-info h3{font-size:16px;margin:0 0 7px}
+.book-info p{font-size:13px;line-height:1.5;color:var(--muted)}
+.book-meta{display:flex;align-items:center;justify-content:space-between;gap:5px}
+.tag{font-size:11px;background:var(--bg);padding:6px 10px;
+border-radius:20px;color:var(--purple);font-weight:bold}
+.read-btn{border:0;border-radius:20px;padding:8px 12px;
+background:var(--blue);color:white;font-size:12px;font-weight:bold}
+.empty{text-align:center;padding:45px;color:var(--muted);column-span:all}
+footer{background:var(--surface);border-top:1px solid var(--border);
+text-align:center;padding:35px 15px;color:var(--muted);line-height:1.8}
+footer strong{color:var(--pink)}
+.modal{display:none;position:fixed;inset:0;z-index:30;
+background:#101020b8;align-items:center;justify-content:center;padding:15px}
+.modal.show{display:flex}
+.modal-box{position:relative;width:min(470px,100%);max-height:90vh;
+overflow-y:auto;background:var(--surface);border-radius:23px;padding:26px;
+box-shadow:var(--shadow)}
+.close{position:absolute;right:14px;top:12px;border:0;border-radius:50%;
+width:35px;height:35px;background:var(--bg);color:var(--text);font-size:21px}
+.modal-box h2{text-align:center;margin:10px 0}
+.subtitle{text-align:center;color:var(--muted);font-size:14px}
+.auth-input{width:100%;padding:13px;margin:7px 0;border:1px solid var(--border);
+border-radius:11px;background:var(--bg);color:var(--text);outline:0}
+.auth-input:focus{border-color:var(--blue)}
+.full{width:100%;margin-top:10px}
+.message{text-align:center;min-height:20px;font-size:13px;margin-top:10px;color:#e34e75}
+.switch{text-align:center;margin-top:16px;font-size:14px}
+.switch a{color:var(--blue);font-weight:bold;cursor:pointer}
+.reader-image{width:100%;height:190px;object-fit:cover;border-radius:14px}
+.reader-text{white-space:pre-line;line-height:1.9;margin-top:20px}
+.tabs{display:flex;background:var(--bg);padding:4px;border-radius:12px;margin:18px 0}
+.tabs button{flex:1;border:0;padding:11px;border-radius:9px;background:transparent;color:var(--text)}
+.tabs button.active{background:var(--blue);color:white}
+@media(max-width:750px){
+header{flex-wrap:wrap;gap:10px}
+.logo{font-size:21px}
+.search{order:3;flex-basis:100%}
+.actions{margin-left:auto}
+.hero{padding:23px;min-height:215px}
+.hero-art{font-size:60px}
+.masonry{columns:2 140px;column-gap:11px}
+.book-card{margin-bottom:12px}
+.book-info{padding:10px}
+.book-info h3{font-size:14px}
+}
+@media(max-width:390px){.hero-art{display:none}.masonry{columns:1}}
+</style>
+</head>
+
+<body>
+
+<header>
+ <div class="logo">Do you <span>know?</span> ✨</div>
+ <div class="search">🔍
+  <input id="searchInput" placeholder="Search books, stories, authors..." oninput="renderBooks()">
+ </div>
+ <div class="actions">
+  <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+  <button class="icon-btn" onclick="showFavorites()">♡</button>
+  <button class="btn" id="authButton" onclick="openAuth()">Sign in</button>
+ </div>
+</header>
+
+<main>
+<section class="hero">
+ <div>
+  <b style="color:#d76fa7">YOUR LITTLE STORY UNIVERSE ✨</b>
+  <h1>Every story has a little magic.</h1>
+  <p>Escape into magical kingdoms, solve mysterious crimes,
+  meet wonderful characters and discover your next favourite story.</p>
+  <button class="btn pink" onclick="scrollBooks()">Explore stories →</button>
+ </div>
+ <div class="hero-art">📚 🪄 💗</div>
+</section>
+
+<div class="section-head"><h2>Explore your imagination 🌈</h2></div>
+
+<div class="categories">
+ <button class="category active" onclick="filterCategory('All',this)">✨ All stories</button>
+ <button class="category" onclick="filterCategory('Fantasy',this)">🪄 Fantasy</button>
+ <button class="category" onclick="filterCategory('Children',this)">🧸 Children</button>
+ <button class="category" onclick="filterCategory('Detective',this)">🔎 Detective</button>
+ <button class="category" onclick="filterCategory('Mystery',this)">🌙 Mystery</button>
+ <button class="category" onclick="filterCategory('Adventure',this)">🗺️ Adventure</button>
+</div>
+
+<section class="story-banner">
+ <div class="section-head" style="margin:3px 0 17px">
+  <h2>Little story moments 💕</h2>
+  <span class="muted">Pick your mood</span>
+ </div>
+ <div class="story-row">
+  <div class="story" onclick="openBook(1)"><div class="story-circle"><img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=200" alt="Forest"></div><small>Magic world</small></div>
+  <div class="story" onclick="openBook(2)"><div class="story-circle"><img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=200" alt="Fairy tale"></div><small>Fairy tales</small></div>
+  <div class="story" onclick="openBook(3)"><div class="story-circle"><img src="https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=200" alt="Books"></div><small>Little readers</small></div>
+  <div class="story" onclick="openBook(4)"><div class="story-circle"><img src="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=200" alt="Mystery"></div><small>Dark secrets</small></div>
+  <div class="story" onclick="openBook(5)"><div class="story-circle"><img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=200" alt="Library"></div><small>Detective time</small></div>
+ </div>
+</section>
+
+<div class="section-head" id="bookSection">
+ <div>
+  <h2 id="sectionTitle">Stories waiting for you 📖</h2>
+  <p class="muted" style="font-size:13px">A collection of little worlds and big adventures.</p>
+ </div>
+ <span class="muted" id="bookCount"></span>
+</div>
+
+<div class="masonry" id="bookGrid"></div>
+</main>
+
+<footer>
+ <div style="font-size:28px">📚 💗 ✨</div>
+ <h2 style="color:var(--text)">Do you know?</h2>
+ <p>Where imagination finds its home.</p>
+ <p>Made with <strong>♥</strong> for every book lover.</p>
+ <small>© 2026 Do you know? All rights reserved.</small>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="modal" id="authModal" onclick="outsideClose(event,'authModal')">
+ <div class="modal-box">
+  <button class="close" onclick="closeModal('authModal')">×</button>
+  <div style="text-align:center;font-size:40px">🤖💗</div>
+  <h2 id="authTitle">Welcome, little reader!</h2>
+  <p class="subtitle" id="authSubtitle">Enter your story universe.</p>
+
+  <div class="tabs">
+   <button id="loginTab" class="active" onclick="switchAuth('login')">Login</button>
+   <button id="signupTab" onclick="switchAuth('signup')">Sign Up</button>
+  </div>
+
+  <form id="authForm" onsubmit="handleAuth(event)">
+   <input class="auth-input" id="authName" placeholder="Full name" style="display:none">
+   <input class="auth-input" id="authEmail" type="email" placeholder="Email address" required>
+   <input class="auth-input" id="authPassword" type="password" placeholder="Password (minimum 6 characters)" minlength="6" required>
+   <input class="auth-input" id="confirmPassword" type="password" placeholder="Confirm password" style="display:none">
+   <button class="btn full" id="authSubmit">Login ✨</button>
+  </form>
+  <div style="text-align:right;margin-top:10px">
+   <a href="#" onclick="forgotPassword(event)" style="color:var(--blue);font-size:13px">Forgot password?</a>
+  </div>
+  <div class="message" id="authMessage" role="status"></div>
+  <p class="subtitle" style="font-size:11px;margin-top:17px">
+   Demo account feature: account details are stored only in this browser.
+   Do not use a real password.
+  </p>
+ </div>
+</div>
+
+<!-- STORY READER -->
+<div class="modal" id="readerModal" onclick="outsideClose(event,'readerModal')">
+ <div class="modal-box">
+  <button class="close" onclick="closeModal('readerModal')">×</button>
+  <img class="reader-image" id="readerImage" alt="Story cover">
+  <h2 id="readerTitle" style="text-align:left"></h2>
+  <p class="muted" id="readerAuthor"></p>
+  <div class="reader-text" id="readerText"></div>
+  <p class="muted" style="font-size:12px">Original sample story written for this website.</p>
+ </div>
+</div>
+
+<script>
+const books=[
+{id:1,title:"The Kingdom of Forgotten Stars",author:"Luna Rose",category:"Fantasy",emoji:"✨",image:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700",description:"A forgotten prophecy and a girl who can talk to stars.",text:`Beyond seven silver mountains stood a kingdom where stars slept in the trees.\n\nA young girl named Elara could hear their whispers.\n\nOne night, a tiny blue star landed on her windowsill.\n\n"Please," it whispered, "the sky is forgetting us."\n\nElara picked up her lantern and stepped into a world nobody had visited for a thousand years.\n\nShe did not know it yet, but the fate of the kingdom rested in her hands...`},
+{id:2,title:"The Little Dragon Who Couldn't Fly",author:"Mia Bloom",category:"Children",emoji:"🐉",image:"https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=700",description:"A tiny dragon discovers that being different is special.",text:`In a valley full of flying dragons lived a little dragon named Pip.\n\nEvery dragon could fly except Pip.\n\nHe tried jumping from hills and flapping his wings. Nothing worked.\n\nOne rainy afternoon, a baby bird fell from its nest.\n\nPip climbed the tallest tree and rescued it.\n\nThat day he learned something wonderful: you don't need to fly to be a hero.`},
+{id:3,title:"The Library Behind the Moon",author:"Ava Winters",category:"Fantasy",emoji:"🌙",image:"https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=700",description:"A secret library holds every story ever dreamed.",text:`At midnight, a staircase appeared behind Mira's bedroom mirror.\n\nAt the top was a library floating among the stars.\n\nIts librarian was a little robot with glowing blue eyes.\n\n"Every book here is a dream someone forgot," it said.\n\nMira reached for a silver book with her name on it.\n\nThe pages were blank. Then a sentence appeared:\n\n"Tonight, your adventure begins..."`},
+{id:4,title:"The Secret of Blackwood House",author:"Arthur Grey",category:"Detective",emoji:"🔎",image:"https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=700",description:"A locked room, a missing painting and three suspects.",text:`Detective Oliver arrived at Blackwood House at exactly nine.\n\nA priceless painting had disappeared from a locked room.\n\nThere were three suspects: the gardener, the housekeeper, and the owner's nephew.\n\nThe windows were locked. The door had no signs of damage.\n\nOliver examined the dusty floor and smiled.\n\n"Interesting," he whispered. "The thief made one tiny mistake."\n\nA single wet footprint led toward the fireplace...`},
+{id:5,title:"The Clockmaker's Mystery",author:"E. J. Carter",category:"Mystery",emoji:"⏰",image:"https://images.unsplash.com/photo-1512820790803-83ca734da794?w=700",description:"Every clock in town stops at the same mysterious minute.",text:`At 11:11 every night, the clocks of Willow Street stopped.\n\nThen Noah discovered an old pocket watch hidden inside his grandfather's desk.\n\nIts hands moved backwards.\n\nA tiny message was engraved on the back:\n\n"Time remembers what people forget."\n\nNoah opened the watch. Somewhere in town, a bell began to ring...`},
+{id:6,title:"The Adventures of Milo",author:"Sophie Lane",category:"Children",emoji:"🧸",image:"https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=700",description:"A curious boy and his rabbit explore a wonderful world.",text:`Milo had a map, a backpack, and a very important mission.\n\nHe wanted to find the rainbow waterfall.\n\nHis best friend, a little rabbit named Button, came along.\n\nTogether they crossed a whispering forest and climbed a hill made of colourful stones.\n\nThe waterfall was more beautiful than any picture Milo had seen.\n\nBut the best part was having someone to share it with.`},
+{id:7,title:"The Last Phoenix",author:"R. A. Moon",category:"Fantasy",emoji:"🔥",image:"https://images.unsplash.com/photo-1511497584788-876760111969?w=700",description:"An ancient firebird may save a dying magical world.",text:`The world had forgotten the phoenix.\n\nIts name appeared only in old songs and broken legends.\n\nBut in the mountains of Ashenfall, a golden egg began to glow.\n\nA young wanderer found it beneath an ancient temple.\n\nWhen the shell cracked, a tiny flame rose into the sky.\n\nThe last phoenix had awakened...`},
+{id:8,title:"The Detective's Missing Diary",author:"James Vale",category:"Detective",emoji:"🕵️",image:"https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=700",description:"A mysterious diary reveals clues to a case from twenty years ago.",text:`Detective Clara found the diary inside an abandoned station.\n\nThe first page contained one sentence:\n\n"I know who took the midnight train."\n\nThe final entry was dated twenty years earlier, the day a famous disappearance occurred.\n\nClara turned the page. A photograph slipped out.\n\nIt showed the station, the train, and a familiar face...`},
+{id:9,title:"The Paper Boat Adventure",author:"Nina Bell",category:"Adventure",emoji:"⛵",image:"https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=700",description:"A paper boat carries a little girl's wish across an enchanted river.",text:`A rainy afternoon gave Lily an idea.\n\nShe folded a paper boat and wrote a wish inside it.\n\n"Find someone who needs a friend."\n\nThe river carried it past gardens, bridges and little villages.\n\nFar away, a lonely boy found the boat on the riverbank.\n\nHe smiled and wrote a reply.\n\nAnd so, a beautiful friendship began.`}
+];
+
+let category="All",favoriteMode=false;
+let favorites=JSON.parse(localStorage.getItem("dykFavorites")||"[]");
+let authMode="login";
+
+function renderBooks(){
+ const query=document.getElementById("searchInput").value.toLowerCase();
+ const filtered=books.filter(b=>
+ (category==="All"||b.category===category)&&
+ (b.title+" "+b.author+" "+b.category+" "+b.description).toLowerCase().includes(query)&&
+ (!favoriteMode||favorites.includes(b.id))
+ );
+ document.getElementById("bookCount").textContent=filtered.length+" stories";
+ document.getElementById("sectionTitle").textContent=favoriteMode?"Your favourite stories 💗":"Stories waiting for you 📖";
+ document.getElementById("bookGrid").innerHTML=filtered.length?filtered.map(b=>`
+ <article class="book-card">
+  <div class="cover" onclick="openBook(${b.id})">
+   <img src="${b.image}" alt="${b.title}" loading="lazy">
+   <button class="fav" aria-label="Toggle favourite" onclick="event.stopPropagation();toggleFavorite(${b.id})">${favorites.includes(b.id)?"♥":"♡"}</button>
+  </div>
+  <div class="book-info">
+   <h3>${b.emoji} ${b.title}</h3>
+   <p>${b.description}</p>
+   <div class="book-meta"><span class="tag">${b.category}</span><button class="read-btn" onclick="openBook(${b.id})">Read sample →</button></div>
+   <p>By ${b.author}</p>
+  </div>
+ </article>`).join(""):'<div class="empty">🌸 No stories found. Try another search!</div>';
+}
+
+function filterCategory(value,button){
+ category=value;favoriteMode=false;
+ document.querySelectorAll(".category").forEach(x=>x.classList.remove("active"));
+ button.classList.add("active");renderBooks();
+}
+function toggleFavorite(id){
+ favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];
+ localStorage.setItem("dykFavorites",JSON.stringify(favorites));renderBooks();
+}
+function showFavorites(){
+ favoriteMode=!favoriteMode;category="All";
+ document.querySelectorAll(".category").forEach(x=>x.classList.remove("active"));
+ document.querySelector(".category").classList.toggle("active",!favoriteMode);
+ renderBooks();document.getElementById("bookSection").scrollIntoView({behavior:"smooth"});
+}
+function openBook(id){
+ const b=books.find(x=>x.id===id);if(!b)return;
+ document.getElementById("readerImage").src=b.image;
+ document.getElementById("readerTitle").textContent=b.emoji+" "+b.title;
+ document.getElementById("readerAuthor").textContent="By "+b.author+" • "+b.category;
+ document.getElementById("readerText").textContent=b.text;
+ document.getElementById("readerModal").classList.add("show");
+}
+function scrollBooks(){document.getElementById("bookSection").scrollIntoView({behavior:"smooth"})}
+function toggleTheme(){
+ document.body.classList.toggle("dark");
+ const dark=document.body.classList.contains("dark");
+ localStorage.setItem("dykTheme",dark?"dark":"light");
+ document.getElementById("themeBtn").textContent=dark?"☀️":"🌙";
+}
+if(localStorage.getItem("dykTheme")==="dark"){
+ document.body.classList.add("dark");document.getElementById("themeBtn").textContent="☀️";
+}
+
+function closeModal(id){document.getElementById(id).classList.remove("show")}
+function outsideClose(e,id){if(e.target.id===id)closeModal(id)}
+function openAuth(){document.getElementById("authModal").classList.add("show");switchAuth("login")}
+function switchAuth(mode){
+ authMode=mode;const signup=mode==="signup";
+ document.getElementById("authTitle").textContent=signup?"Create your account 💗":"Welcome back, reader!";
+ document.getElementById("authSubtitle").textContent=signup?"Join our little universe of stories.":"Sign in and continue your adventure.";
+ document.getElementById("authName").style.display=signup?"block":"none";
+ document.getElementById("authName").required=signup;
+ document.getElementById("confirmPassword").style.display=signup?"block":"none";
+ document.getElementById("confirmPassword").required=signup;
+ document.getElementById("authSubmit").textContent=signup?"Create account ✨":"Login ✨";
+ document.getElementById("loginTab").classList.toggle("active",!signup);
+ document.getElementById("signupTab").classList.toggle("active",signup);
+ document.getElementById("authMessage").textContent="";
+}
+function handleAuth(e){
+ e.preventDefault();
+ const name=document.getElementById("authName").value.trim();
+ const email=document.getElementById("authEmail").value.trim().toLowerCase();
+ const password=document.getElementById("authPassword").value;
+ const confirm=document.getElementById("confirmPassword").value;
+ const msg=document.getElementById("authMessage");
+ let users=JSON.parse(localStorage.getItem("dykUsers")||"[]");
+ if(authMode==="signup"){
+  if(name.length<2){msg.textContent="Please enter your name.";return}
+  if(password!==confirm){msg.textContent="Passwords do not match.";return}
+  if(users.some(u=>u.email===email)){msg.textContent="This email is already registered.";return}
+  users.push({name,email,password});
+  localStorage.setItem("dykUsers",JSON.stringify(users));
+  localStorage.setItem("dykSession",JSON.stringify({name,email}));
+  msg.style.color="#239b70";msg.textContent="Account created! Welcome 💗";
+ }else{
+  const user=users.find(u=>u.email===email&&u.password===password);
+  if(!user){msg.textContent="Incorrect email or password.";return}
+  localStorage.setItem("dykSession",JSON.stringify({name:user.name,email}));
+  msg.style.color="#239b70";msg.textContent="Welcome back, "+user.name+"!";
+ }
+ updateAuthButton();setTimeout(()=>closeModal("authModal"),900);
+}
+function forgotPassword(e){
+ e.preventDefault();
+ document.getElementById("authMessage").textContent="This demo does not send password reset emails. Real password reset requires Firebase Authentication.";
+}
+function updateAuthButton(){
+ const session=JSON.parse(localStorage.getItem("dykSession")||"null");
+ const btn=document.getElementById("authButton");
+ if(session){btn.textContent="Hi, "+session.name.split(" ")[0]+" 👋";btn.onclick=logout}
+ else{btn.textContent="Sign in";btn.onclick=openAuth}
+}
+function logout(){
+ localStorage.removeItem("dykSession");updateAuthButton();alert("You have signed out. See you soon! 💗");
+}
+renderBooks();updateAuthButton();
+</script>
+</body>
+</html>
